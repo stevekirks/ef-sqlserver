@@ -1,0 +1,3 @@
+﻿INSERT [Food] ([Id], [Name], [Timestamp]) VALUES (246018, N'Carrot', CAST(N'2021-07-13T11:21:35.6447987' AS DATETIME2))
+INSERT [Food] ([Id], [Name], [Timestamp]) VALUES (246019, N'Onion', CAST(N'2021-07-14T11:21:35.6447987' AS DATETIME2))
+INSERT [Food] ([Id], [Name], [Timestamp]) VALUES (246020, N'Garlic', CAST(N'2021-07-15T11:21:35.6447987' AS DATETIME2))
