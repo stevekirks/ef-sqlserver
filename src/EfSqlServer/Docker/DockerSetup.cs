@@ -144,7 +144,7 @@ namespace EfSqlServer.Docker
 
         public void Dispose()
         {
-            //_dockerSetup.RemoveDockerContainer();
+            RemoveDockerContainer();
         }
     }
 }

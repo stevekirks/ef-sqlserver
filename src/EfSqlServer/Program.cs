@@ -28,7 +28,7 @@ namespace EfSqlServer
                 .CreateLogger();
             var loggerFactory = new LoggerFactory(new[] { new SerilogLoggerProvider() });
 
-            var dockerSetup = new DockerSetup();
+            using var dockerSetup = new DockerSetup();
             dockerSetup.RunDockerContainer();
             dockerSetup.SetupDatabase();
 
@@ -40,9 +40,14 @@ namespace EfSqlServer
                     options => options.EnableRetryOnFailure(2));
             var ctx = new EfSqlServerDbContext(dbOptionsBuilder.Options);
 
-            var timestampFrom = DateTime.UtcNow.AddYears(-2);
+            var timestampFrom = DateTime.UtcNow.AddYears(-10);
+            var timestampTo = DateTime.UtcNow.AddYears(-10);
 
-            var query = ctx.Foods.Where(a => a.Timestamp > timestampFrom).Select(FoodResultHelpers.Map());
+            var query = ctx.Foods.Select(FoodResultHelpers.Map());
+
+            // Multiple AND conditions
+            query = query.Where(a => a.DateCreated > timestampFrom);
+            query = query.Where(a => a.DateCreated < timestampTo);
 
             // Suppose multiple OR conditions cannot be combined into a single Where clause.
             // In this case, create a list with expressions of multiple OR conditions
@@ -50,10 +55,12 @@ namespace EfSqlServer
             orExpressions.Add(a => a.Code == 246018);
             orExpressions.Add(a => a.Ingredient == "Onion");
             orExpressions.Add(a => a.Code == 246020);
-
-            query.WhereAny(orExpressions);
+            query = query.WhereAny(orExpressions);
 
             var result = await query.ToListAsync();
+
+            Log.Debug("Query returned {resultCount} items", result.Count);
+            Console.ReadKey();
         }
     }
 }
